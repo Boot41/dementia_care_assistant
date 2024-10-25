@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # Backend (Django)
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: django-backend
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_DB=dementia_care
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=12345
+      - POSTGRES_HOST=localhost
+
+  # Frontend (React)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: react-frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+
+  # PostgreSQL Database
+  db:
+    image: postgres:14
+    container_name: postgres-db
+    environment:
+      - POSTGRES_DB=dementia_care
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=12345
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
